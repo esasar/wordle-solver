@@ -19,11 +19,11 @@ public class Main {
      * - ParallelStream: 3382,412 ms
      */
     private static void solve() {
-        final var dictionary = Dictionary.fromPath(FIN_DICTIONARY_PATH);
+        final var dictionary = Dictionary.fromPath(DICTIONARY_PATH);
         // examples
         //  ["tares", "cloam", "spunk", "whyda", "abyss"]
         //  ["tares", "broil", "micra", "cigar"]
-        final var wordle = new Wordle("silmu");
+        final var wordle = new Wordle("abyss");
         final var solver = new Solver(wordle, dictionary);
         solver.solve();
     }

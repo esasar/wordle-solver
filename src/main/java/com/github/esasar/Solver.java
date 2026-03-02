@@ -19,18 +19,23 @@ public record Solver(Wordle wordle, Dictionary dictionary) {
             System.out.println("Guessed: " + guess);
 
             if (this.wordle.guess(guess)) {
+                System.out.println("Solved with " + attempts + " attempts");
                 break;
             }
 
-            final var status = Wordle.generateStatus(guess,
-                                                     this.wordle.answer());
+            final var status = Wordle.generateStatus(guess, this.wordle.answer());
 
-            solutions = filterSolutions(solutions,
-                                        guess,
-                                        status);
+            final var filteredSolutions = filterSolutions(solutions, guess, status);
+
+            // if solution set has not changed, something went wrong
+            // e.g. the word is not present in the dictionary
+            if (filteredSolutions.equals(solutions)) {
+                System.out.println("Could not find a solution");
+                break;
+            }
+
+            solutions = filteredSolutions;
         }
-
-        System.out.println("Solved with " + attempts + " attempts");
     }
 
     private String generateGuess(final Set<String> solutions,
