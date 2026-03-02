@@ -16,9 +16,8 @@ public class Main {
     private static void solve() {
         final var dictionary = Dictionary.fromPath(DICTIONARY_PATH);
         // examples
-        //  ["tares", "cloam", "spunk", "whyda", "abyss"]
         //  ["tares", "broil", "micra", "cigar"]
-        final var wordle = new Wordle("abyss");
+        final var wordle = new Wordle("cigar");
         final var solver = new Solver(wordle, dictionary);
         solver.solve();
     }

@@ -6,6 +6,10 @@ import java.util.stream.Collectors;
 public record Solver(Wordle wordle, Dictionary dictionary) {
 
     private static final int MAX_ITERATIONS = 64;
+    private static final double INV_LOG2 = 1.0 / Math.log(2);
+
+    private static final ThreadLocal<int[]> PATTERN_COUNTS = ThreadLocal.withInitial(() -> new int[1024]);
+    private static final ThreadLocal<int[]> USED_PATTERNS = ThreadLocal.withInitial(() -> new int[1024]);
 
     public void solve() {
         var solutions = this.dictionary.dictionary();
@@ -74,21 +78,29 @@ public record Solver(Wordle wordle, Dictionary dictionary) {
 
     private double entropy(final String guess,
                            final Set<String> solutions) {
-        final var patternCounts = new HashMap<Integer, Integer>();
+        // array of pattern counts
+        // e.g. pattern counts[0b10] represents the count for pattern [PRESENT, ABSENT, ABSENT, ABSENT, ABSENT]
+        final var counts = PATTERN_COUNTS.get();
+        // tracks used patterns, so we need not iterate entire counts
+        final var usedPatterns = USED_PATTERNS.get();
+        var usedCount = 0;
 
         for (final var solution : solutions) {
-            final var status = Wordle.generateStatus(guess,
-                                                     solution);
-
-            patternCounts.merge(status, 1, Integer::sum);
+            final var status = Wordle.generateStatus(guess, solution);
+            if (counts[status] == 0) {
+                usedPatterns[usedCount++] = status;
+            }
+            counts[status]++;
         }
 
         final var total = solutions.size();
-
         var entropy = 0.0;
-        for (final int count : patternCounts.values()) {
+
+        for (int i = 0; i < usedCount; i++) {
+            final int count = counts[usedPatterns[i]];
             final double p = (double) count / total;
-            entropy -= p * (Math.log(p) / Math.log(2));
+            entropy -= p * Math.log(p) * INV_LOG2;
+            counts[usedPatterns[i]] = 0;
         }
 
         return entropy;
