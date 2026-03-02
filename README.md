@@ -1,0 +1,1 @@
+Solves [Wordle](https://en.wikipedia.org/wiki/Wordle) using a word dictionary and [information theory](https://en.wikipedia.org/wiki/Information_theory) trying to be as fast as possible. 
