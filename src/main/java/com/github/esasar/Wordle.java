@@ -32,7 +32,6 @@ public record Wordle(String answer) {
         // array of available letters
         // e.g. available[0] = 1 means one 'a' is available.
         final var available = AVAILABLE.get();
-        Arrays.fill(available, 0);
 
         // mark correct
         for (int i = 0; i < 5; i++) {
@@ -52,6 +51,10 @@ public record Wordle(String answer) {
                 status |= (PRESENT << (i * 2));
                 available[g - 'a']--;
             }
+        }
+
+        for (int i = 0; i < 5; i++) {
+            available[answer[i] - 'a'] = 0;
         }
 
         return status;

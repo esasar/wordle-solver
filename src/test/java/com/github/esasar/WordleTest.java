@@ -7,32 +7,32 @@ public class WordleTest {
 
     @Test
     public void generateResult_withAllCorrect() {
-        final var res = Wordle.generateStatus("aaaaa",
-                                              "aaaaa");
+        final var res = Wordle.generateStatus("aaaaa".getBytes(),
+                                              "aaaaa".getBytes());
 
         Assertions.assertEquals(0b10_10_10_10_10, res);
     }
 
     @Test
     public void generateResult_withAllAbsent() {
-        final var res = Wordle.generateStatus("bbbbb",
-                                              "aaaaa");
+        final var res = Wordle.generateStatus("bbbbb".getBytes(),
+                                              "aaaaa".getBytes());
 
         Assertions.assertEquals(0b00_00_00_00_00, res);
     }
 
     @Test
     public void generateResult_withAllPresent() {
-        final var res = Wordle.generateStatus("abcde",
-                                              "eabcd");
+        final var res = Wordle.generateStatus("abcde".getBytes(),
+                                              "eabcd".getBytes());
 
         Assertions.assertEquals(0b01_01_01_01_01, res);
     }
 
     @Test
     public void generateResult_withSomePresent() {
-        final var res = Wordle.generateStatus("caacc",
-                                              "aabbb");
+        final var res = Wordle.generateStatus("caacc".getBytes(),
+                                              "aabbb".getBytes());
 
         Assertions.assertEquals(0b00_00_01_10_00, res);
     }

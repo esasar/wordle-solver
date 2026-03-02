@@ -8,16 +8,14 @@ public class Main {
     private static final Path FIN_DICTIONARY_PATH = Path.of("src/main/resources/fin_dictionary.txt");
 
     static void main() throws InterruptedException {
-        benchmark(Main::solve);
-    }
-
-    private static void solve() {
         final var dictionary = Dictionary.fromPath(DICTIONARY_PATH);
         // examples
+        //  ["tares", "cloam", "spunk", "whyda", "abyss"]
         //  ["tares", "broil", "micra", "cigar"]
         final var wordle = new Wordle("cigar");
         final var solver = new Solver(wordle, dictionary);
-        solver.solve();
+
+        benchmark(solver::solve);
     }
 
     private static void benchmark(final Runnable runnable) {

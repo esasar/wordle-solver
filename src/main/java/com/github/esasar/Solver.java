@@ -1,7 +1,6 @@
 package com.github.esasar;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public record Solver(Wordle wordle, Dictionary dictionary) {
 
