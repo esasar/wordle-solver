@@ -8,8 +8,6 @@ public class Main {
     private static final Path FIN_DICTIONARY_PATH = Path.of("src/main/resources/fin_dictionary.txt");
 
     static void main() throws InterruptedException {
-        System.out.println("GO");
-        Thread.sleep(10000);
         benchmark(Main::solve);
     }
 

@@ -16,15 +16,15 @@ public record Wordle(String answer) {
     }
 
     public boolean guess(final String guess) {
-        final var status = generateStatus(guess,
-                                          this.answer);
+        final var status = generateStatus(guess.getBytes(),
+                                          this.answer.getBytes());
 
         return status == ALL_CORRECT;
     }
 
-    public static int generateStatus(final String guess,
-                                     final String answer) {
-        if (guess.length() != 5 || answer.length() != 5) {
+    public static int generateStatus(final byte[] guess,
+                                     final byte[] answer) {
+        if (guess.length != 5 || answer.length != 5) {
             throw new IllegalArgumentException("Guess and answer must have length 5");
         }
 
@@ -34,13 +34,10 @@ public record Wordle(String answer) {
         final var available = AVAILABLE.get();
         Arrays.fill(available, 0);
 
-        final var guessBytes = guess.getBytes();
-        final var answerBytes = answer.getBytes();
-
         // mark correct
         for (int i = 0; i < 5; i++) {
-            final var g = guessBytes[i];
-            final var a = answerBytes[i];
+            final var g = guess[i];
+            final var a = answer[i];
             if (a == g) {
                 status |= (CORRECT << (i * 2));
             } else {
@@ -50,7 +47,7 @@ public record Wordle(String answer) {
 
         // mark correct, but incorrect place
         for (int i = 0; i < 5; i++) {
-            final var g = guessBytes[i];
+            final var g = guess[i];
             if ((status >> (i * 2) & 0b11) == 0 && available[g - 'a'] > 0) {
                 status |= (PRESENT << (i * 2));
                 available[g - 'a']--;
