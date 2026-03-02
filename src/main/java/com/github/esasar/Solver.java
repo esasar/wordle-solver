@@ -54,11 +54,11 @@ public record Solver(Wordle wordle, Dictionary dictionary) {
 
     private Set<String> filterSolutions(final Set<String> solutions,
                                         final String guess,
-                                        final Status[] status) {
+                                        final int status) {
         return solutions.parallelStream()
                 .filter(s -> {
                     final var st = Wordle.generateStatus(guess, s);
-                    return Arrays.equals(st, status);
+                    return st == status;
                 })
                 .collect(Collectors.toSet());
     }
@@ -74,14 +74,13 @@ public record Solver(Wordle wordle, Dictionary dictionary) {
 
     private double entropy(final String guess,
                            final Set<String> solutions) {
-        final var patternCounts = new HashMap<String, Integer>();
+        final var patternCounts = new HashMap<Integer, Integer>();
 
         for (final var solution : solutions) {
             final var status = Wordle.generateStatus(guess,
                                                      solution);
 
-            final var key = createStatusKey(status);
-            patternCounts.merge(key, 1, Integer::sum);
+            patternCounts.merge(status, 1, Integer::sum);
         }
 
         final var total = solutions.size();
@@ -93,13 +92,5 @@ public record Solver(Wordle wordle, Dictionary dictionary) {
         }
 
         return entropy;
-    }
-
-    private String createStatusKey(final Status[] status) {
-        final var sb = new StringBuilder(5);
-        for (final var s : status) {
-            sb.append(s.key);
-        }
-        return sb.toString();
     }
 }

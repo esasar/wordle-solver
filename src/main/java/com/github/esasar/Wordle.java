@@ -4,6 +4,13 @@ import java.util.*;
 
 public record Wordle(String answer) {
 
+    public static final int CORRECT = 0b10;
+    public static final int PRESENT = 0b01;
+
+    public static final int ALL_CORRECT = 0b10_10_10_10_10;
+
+    private static final ThreadLocal<int[]> AVAILABLE = ThreadLocal.withInitial(() -> new int[26]);
+
     public Wordle(final String answer) {
         this.answer = Objects.requireNonNull(answer);
     }
@@ -12,39 +19,41 @@ public record Wordle(String answer) {
         final var status = generateStatus(guess,
                                           this.answer);
 
-        return Arrays.stream(status).allMatch(Status.CORRECT::equals);
+        return status == ALL_CORRECT;
     }
 
-    public static Status[] generateStatus(final String guess,
-                                          final String answer) {
+    public static int generateStatus(final String guess,
+                                     final String answer) {
         if (guess.length() != 5 || answer.length() != 5) {
             throw new IllegalArgumentException("Guess and answer must have length 5");
         }
 
-        var status = new Status[5];
-        Arrays.fill(status, Status.ABSENT);
-        var used = new boolean[5];
+        var status = 0;
+        // array of available letters
+        // e.g. available[0] = 1 means one 'a' is available.
+        final var available = AVAILABLE.get();
+        Arrays.fill(available, 0);
+
+        final var guessBytes = guess.getBytes();
+        final var answerBytes = answer.getBytes();
 
         // mark correct
-        for (int i = 0; i < guess.length(); i++) {
-            if (guess.charAt(i) == answer.charAt(i)) {
-                status[i] = Status.CORRECT;
-                used[i] = true;
+        for (int i = 0; i < 5; i++) {
+            final var g = guessBytes[i];
+            final var a = answerBytes[i];
+            if (a == g) {
+                status |= (CORRECT << (i * 2));
+            } else {
+                available[a - 'a']++;
             }
         }
 
         // mark correct, but incorrect place
-        for (int i = 0; i < guess.length(); i++) {
-            if (Status.CORRECT.equals(status[i])) {
-                continue;
-            }
-
-            for (int j = 0; j < answer.length(); j++) {
-                if (answer.charAt(j) == guess.charAt(i) && !used[j]) {
-                    used[j] = true;
-                    status[i] = Status.PRESENT;
-                    break;
-                }
+        for (int i = 0; i < 5; i++) {
+            final var g = guessBytes[i];
+            if ((status >> (i * 2) & 0b11) == 0 && available[g - 'a'] > 0) {
+                status |= (PRESENT << (i * 2));
+                available[g - 'a']--;
             }
         }
 

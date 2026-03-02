@@ -7,17 +7,12 @@ public class Main {
     private static final Path DICTIONARY_PATH = Path.of("src/main/resources/dictionary.txt");
     private static final Path FIN_DICTIONARY_PATH = Path.of("src/main/resources/fin_dictionary.txt");
 
-    static void main() {
+    static void main() throws InterruptedException {
+        System.out.println("GO");
+        Thread.sleep(10000);
         benchmark(Main::solve);
     }
 
-    /**
-     * Benchmark:
-     * - Naive: 24155,615ms
-     * -- {@link Wordle#generateStatus(String, String)} takes ~48.7% of computation time
-     * -- {@link java.util.HashMap#merge(Object, Object, BiFunction)} takes ~22.9% of computation time
-     * - ParallelStream: 3382,412 ms
-     */
     private static void solve() {
         final var dictionary = Dictionary.fromPath(DICTIONARY_PATH);
         // examples

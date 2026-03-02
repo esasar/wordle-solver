@@ -1,7 +1,5 @@
 package com.github.esasar;
 
-import com.github.esasar.Status;
-import com.github.esasar.Wordle;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -12,13 +10,7 @@ public class WordleTest {
         final var res = Wordle.generateStatus("aaaaa",
                                               "aaaaa");
 
-        Assertions.assertArrayEquals(new Status[] {
-                Status.CORRECT,
-                Status.CORRECT,
-                Status.CORRECT,
-                Status.CORRECT,
-                Status.CORRECT
-        }, res);
+        Assertions.assertEquals(0b10_10_10_10_10, res);
     }
 
     @Test
@@ -26,27 +18,15 @@ public class WordleTest {
         final var res = Wordle.generateStatus("bbbbb",
                                               "aaaaa");
 
-        Assertions.assertArrayEquals(new Status[] {
-                Status.ABSENT,
-                Status.ABSENT,
-                Status.ABSENT,
-                Status.ABSENT,
-                Status.ABSENT
-        }, res);
+        Assertions.assertEquals(0b00_00_00_00_00, res);
     }
 
     @Test
     public void generateResult_withAllPresent() {
-        final var res = Wordle.generateStatus("bbaaa",
-                                              "aabbb");
+        final var res = Wordle.generateStatus("abcde",
+                                              "eabcd");
 
-        Assertions.assertArrayEquals(new Status[] {
-                Status.PRESENT,
-                Status.PRESENT,
-                Status.PRESENT,
-                Status.PRESENT,
-                Status.PRESENT
-        }, res);
+        Assertions.assertEquals(0b01_01_01_01_01, res);
     }
 
     @Test
@@ -54,12 +34,6 @@ public class WordleTest {
         final var res = Wordle.generateStatus("caacc",
                                               "aabbb");
 
-        Assertions.assertArrayEquals(new Status[] {
-                Status.ABSENT,
-                Status.CORRECT,
-                Status.PRESENT,
-                Status.ABSENT,
-                Status.ABSENT
-        }, res);
+        Assertions.assertEquals(0b00_00_01_10_00, res);
     }
 }
